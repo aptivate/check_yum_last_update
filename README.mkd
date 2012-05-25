@@ -21,6 +21,13 @@ Options:
                           one result line is printed as per Nagios standards
     -V, --version         Print version number and exit
 
+## NRPE set up
+
+To configure it for NRPE you need a line like the below in your `nrpe.cfg`
+
+    command[check_yum_last_update]=/usr/bin/sudo /usr/local/lib/nagios/plugins/check_yum_last_update -w 45 -c 75
+
 ## How it works
 
 It looks for the last line with "Updated:" in `/var/log/yum.log` (and it will also check `/var/log/yum.log.1` etc.) It then parses the date at the start of the line and works out how long ago the update was.
+
