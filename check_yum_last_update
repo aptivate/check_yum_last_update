@@ -118,6 +118,11 @@ class YumUpdateChecker(object):
         if self.warning > self.critical:
             end(UNKNOWN, "Warning cannot be larger than critical")
 
+        if self.exclude == None:
+            self.exclude_list = []
+        else:
+            self.exclude_list = self.exclude.split(',')
+
         if self.verbosity == None:
             self.verbosity = 0
         try:
@@ -181,9 +186,15 @@ class YumUpdateChecker(object):
             return None
         last_date = None
         for line in open(logfile):
-            if line.find('Updated:') != -1:
-                # date is first 6 characters of line
-                last_date = line[:6]
+            if 'Updated:' in line:
+                # might want to exclude some packages
+                use_line = True
+                for exclude in self.exclude_list:
+                    if exclude in line:
+                        use_line = False
+                if use_line:
+                    # date is first 6 characters of line
+                    last_date = line[:6]
         if last_date == None:
             self.vprint(1, 'no lines with "Updated:" found in %s' % logfile)
             return None
@@ -258,6 +269,12 @@ def main():
                        help="Sets a timeout in seconds after which the "  \
                            +"plugin will exit (defaults to %s seconds). " \
                                                       % DEFAULT_TIMEOUT)
+    parser.add_option( "-x", 
+                       "--exclude", 
+                       dest="exclude",
+                       help="List of packages to ignore updates of when " +
+                            "checking for last update. (For when you have " +
+                            "a small number of packages auto-update.)")
 
     parser.add_option( "-v", 
                        "--verbose", 
@@ -282,6 +299,7 @@ def main():
 
     update_checker.warning      = options.warning
     update_checker.critical     = options.critical
+    update_checker.exclude      = options.exclude
     update_checker.timeout      = options.timeout
     update_checker.verbosity    = options.verbosity
 
