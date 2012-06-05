@@ -13,6 +13,10 @@ Options:
     -c CRITICAL, --critical=CRITICAL
                           Issue CRITICAL if the last update was more than this
                           many days ago.
+    -x EXCLUDE, --exclude=EXCLUDE
+                          List of packages to ignore updates of when checking
+                          for last update. (For when you have a small number of
+                          packages auto-update.)
     -t TIMEOUT, --timeout=TIMEOUT
                           Sets a timeout in seconds after which the plugin will
                           exit (defaults to 30 seconds).
